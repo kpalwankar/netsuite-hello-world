@@ -1,0 +1,62 @@
+#%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/97867292-717c-4400-8cb7-46fd52657700/ # 
+title: Order API
+version: 1.0
+mediaType: [ application/json ]
+description: Netsuite Order API 
+
+/orders:
+  post:
+    displayName: Create New Order
+    description: Create a new order into Netsuite
+    body:
+      application/json:
+        examples: !include examples/post-order-body.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              {
+                status: "Order Created",
+                orderId: 14244
+              }
+
+  /{id}:
+    get:
+      displayName: Get Order Details
+      description: Retrieve order details from Netsuite
+      responses:
+        200:
+          body:
+            application/json:
+              examples: !include examples/get-order-response.raml
+
+    put:
+      displayName: Update an Order
+      description: Update order details in Netsuite
+      body:
+        application/json:
+          examples: !include examples/post-order-body.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example: 
+                {
+                  status: "Order Updated",
+                  orderId: 14244
+                }
+
+    delete: 
+      displayName: Delete an Order
+      description: Delete an order from Netsuite
+      responses:
+        200:
+          body:
+            application/json:
+              example: 
+                {
+                  status: "Order Deleted",
+                  orderId: 14244
+                }

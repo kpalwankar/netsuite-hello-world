@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="order-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="order-api-config" raml="order-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <netsuite:config name="NetSuite_Config" doc:name="NetSuite Config" doc:id="996014da-7d52-42e0-b2d5-30a2c5503548" >
+		<netsuite:login-authentication-connection account="TSTDRV917625" roleId="3" email="netsuite.sandbox@mulesoft.com" applicationId="D9F4703E-4BB4-4D6B-A0BA-2A97C9C5DDB1" password="Mul3NetSuite"/>
+	</netsuite:config>
+	<flow name="order-api-main">
+        <http:listener config-ref="order-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="order-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="order-api-console">
+        <http:listener config-ref="order-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="order-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\orders\(id):order-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="d3e563ba-7bbb-4ff4-adc6-1b6279ec9c69">
+            <ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	internalId: attributes.uriParams.id,
+	entity: {
+		internalId: payload.customerId,
+		"type": 'CUSTOMER'
+	},
+	itemList: {
+		item: [
+			{
+			amount: payload.amount,
+			item: {
+				internalId: "9113",
+				"type": 'INVENTORY_ITEM'
+			},
+			quantity: payload.quantity
+		}
+		],
+		replaceAll: true
+	},
+	orderStatus: "PENDING_FULFILLMENT",
+	billingAddress: {
+		addr1: "123 Test St",
+		city: "Philadelphia",
+		state: "PA",
+		zip: "18241"
+	},
+	shippingAddress: {
+		addr1: "123 Test St",
+		city: "Philadelphia",
+		state: "PA",
+		zip: "18241"
+	},
+	ccApproved: true
+}
+]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+                <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<netsuite:update-record doc:name="Update record" doc:id="c74826d2-6efd-45a5-9ad1-7a3b7d86719b" config-ref="NetSuite_Config" recordType="SALES_ORDER"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="62745984-50cd-4897-9601-17c86f520ec0">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  status: "Order Updated",
+  orderId:  vars.id
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d774a08d-9054-4a4a-869c-65b3848dd9a7" >
+				<ee:transform doc:name="Transform Message" doc:id="74746346-2082-4e13-9502-eaf415dc5e93" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "There was an error. Order not updated."
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+    </flow>
+    <flow name="delete:\orders\(id):order-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="091e9481-1480-4e6f-ada5-0301bba61b58">
+            <ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	internalId: attributes.uriParams.id,
+	"type": 'SALES_ORDER'
+} as Object {
+	class : "org.mule.module.netsuite.extension.api.RecordRef"
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="id" ><![CDATA[attributes.uriParams.id]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <netsuite:delete-record doc:name="Delete record" doc:id="d1b989c0-fd82-4826-beb8-c507ee1014bc" config-ref="NetSuite_Config">
+		</netsuite:delete-record>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e3a21fa2-434c-412d-90d1-f2be19cc8e5c">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  status: "Order Deleted",
+  orderId: vars.id
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9a51bfb8-cb1a-40d0-8a12-7b7db095bb22" >
+				<ee:transform doc:name="Transform Message" doc:id="3d8b9253-1887-4251-a4f6-3027ec24c2a3" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Record not found"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+    </flow>
+    <flow name="get:\orders\(id):order-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="e93f6ae5-11da-442b-a7f4-ab6a0e1e42f0">
+            <ee:variables>
+                <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <netsuite:get-record doc:id="0fc49fde-2249-4631-95a6-d9b212788d87" config-ref="NetSuite_Config" recordType="SALES_ORDER" internalId="#[vars.id]"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="71aaa675-bcfe-4720-b889-8a962a3c5ddc">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	orderStatus: payload.orderStatus,
+	orderId: payload.internalId,
+	quantity: payload.itemList.item[0].quantity,
+	total: payload.total,
+	email: payload.email,
+	shippingAddress: {
+		city: payload.shippingAddress.city,
+		country: payload.shippingAddress.country,
+		state: payload.shippingAddress.state,
+		zip: payload.shippingAddress.zip,
+		addr1: payload.shippingAddress.addr1
+	},
+	billingAddress: {
+		city: payload.billingAddress.city,
+		country: payload.billingAddress.country,
+		state: payload.billingAddress.state,
+		zip: payload.billingAddress.zip,
+		addr1: payload.billingAddress.addr1
+	},
+	customerId: payload.entity.internalId,
+	customerName: payload.entity.name,
+	status: payload.status
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f056db5e-dfdf-4a1e-8984-ad77df835713" >
+				<ee:transform doc:name="Transform Message" doc:id="f6775e56-f5d3-4ba5-8052-ccf83d308b74" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Record not found"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+    </flow>
+    <flow name="post:\orders:order-api-config">
+        <ee:transform doc:name="Transform Message" doc:id="74333167-b719-49c8-9ba7-72c0d42776f5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	entity: {
+		internalId: payload.customerId,
+		"type": 'CUSTOMER'
+	},
+	externalId: randomInt(1000),
+	itemList: {
+		item: [
+			{
+			amount: payload.amount,
+			item: {
+				internalId: "9113",
+				"type": 'INVENTORY_ITEM'
+			},
+			quantity: payload.quantity
+		}
+		],
+		replaceAll: true
+	},
+	orderStatus: "PENDING_FULFILLMENT",
+	billingAddress: {
+		addr1: "123 Test St",
+		city: "Philadelphia",
+		state: "PA",
+		zip: "18241"
+	},
+	shippingAddress: {
+		addr1: "123 Test St",
+		city: "Philadelphia",
+		state: "PA",
+		zip: "18241"
+	},
+	ccApproved: true
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:add-record recordType="SALES_ORDER" doc:name="Add record" doc:id="60ea029e-8055-4ae9-b80a-2710e8b64038" config-ref="NetSuite_Config"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="f5eb85bf-ef72-4105-9400-4dd03f1f7573">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  status: "Order Created",
+  orderId: payload.internalId
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7f5b8777-a46d-4ce1-8ae1-cf31cea63510" >
+				<ee:transform doc:name="Transform Message" doc:id="128cd7c5-53a3-4541-b6c9-b63c6d85e50f" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "There was an error. Order not created."
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+    </flow>
+</mule>

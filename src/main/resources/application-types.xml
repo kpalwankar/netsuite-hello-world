@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="NSGetOrderResp" format="json">
+      <types:shape format="weave" example="ns-order-response.json"><![CDATA[%dw 2.0
+type NSGetOrderResp = {|
+  tranId: String, 
+  revenueStatus: String, 
+  salesEffectiveDate: String, 
+  taxItem: {|
+    "type": Null, 
+    internalId: String, 
+    externalId: Null, 
+    name: String
+  |}, 
+  orderStatus: String, 
+  source: String, 
+  subTotal: Number {"typeId": "double"}, 
+  isRecurringPayment: Boolean, 
+  internalId: String, 
+  saveOnAuthDecline: Boolean, 
+  total: Number {"typeId": "double"}, 
+  balance: Number {"typeId": "int"}, 
+  email: String, 
+  toBeFaxed: Boolean, 
+  customFieldList: {| customField: Array<{| StringCustomFieldRef__custbody1: String |}> |}, 
+  getAuth: Boolean, 
+  toBePrinted: Boolean, 
+  lastModifiedDate: String, 
+  leadSource: {|
+    "type": Null, 
+    internalId: String, 
+    externalId: Null, 
+    name: String
+  |}, 
+  customForm: {|
+    "type": Null, 
+    internalId: String, 
+    externalId: Null, 
+    name: String
+  |}, 
+  isTaxable: Boolean, 
+  externalId: String, 
+  ccApproved: Boolean, 
+  shipDate: String, 
+  recognizedRevenue: Number {"typeId": "int"}, 
+  subsidiary: {|
+    "type": Null, 
+    internalId: String, 
+    externalId: Null, 
+    name: String
+  |}, 
+  shipComplete: Boolean, 
+  excludeCommission: Boolean, 
+  taxRate: Number {"typeId": "int"}, 
+  createdDate: String, 
+  deferredRevenue: Number {"typeId": "int"}, 
+  discountTotal: Number {"typeId": "int"}, 
+  canHaveStackable: Boolean, 
+  shipMethod: {|
+    "type": Null, 
+    internalId: String, 
+    externalId: Null, 
+    name: String
+  |}, 
+  toBeEmailed: Boolean, 
+  shippingAddress: {|
+    addressee: Null, 
+    addrPhone: Null, 
+    addr3: Null, 
+    city: String, 
+    override: Boolean, 
+    country: String, 
+    internalId: Null, 
+    state: String, 
+    customFieldList: Null, 
+    addr2: Null, 
+    attention: Null, 
+    zip: String, 
+    addr1: String, 
+    nullFieldList: Null, 
+    addrText: String
+  |}, 
+  tranDate: String, 
+  itemList: {|
+    replaceAll: Boolean, 
+    item: Array<{|
+      taxAmount: Null, 
+      subscription: Null, 
+      vsoeDeferral: Null, 
+      revRecEndDate: Null, 
+      price: {|
+        "type": Null, 
+        internalId: String, 
+        externalId: Null, 
+        name: String
+      |}, 
+      shipGroup: Null, 
+      expandItemGroup: Boolean, 
+      quantityAvailable: Null, 
+      poRate: Null, 
+      location: Null, 
+      createPo: Null, 
+      isEstimate: Boolean, 
+      revRecSchedule: Null, 
+      grossAmt: Null, 
+      poVendor: Null, 
+      vsoePrice: Null, 
+      taxRate1: Null, 
+      giftCertMessage: Null, 
+      noAutoAssignLocation: Null, 
+      expectedShipDate: Null, 
+      vsoeAllocation: Null, 
+      chargeType: Null, 
+      tax1Amt: Null, 
+      commitInventory: String, 
+      giftCertFrom: Null, 
+      quantityBackOrdered: Number {"typeId": "int"}, 
+      vsoeIsEstimate: Null, 
+      customFieldList: Null, 
+      vsoeAmount: Null, 
+      amount: Number {"typeId": "double"}, 
+      quantityBilled: Number {"typeId": "int"}, 
+      vsoePermitDiscount: Null, 
+      description: Null, 
+      options: Null, 
+      units: Null, 
+      line: Number {"typeId": "int"}, 
+      serialNumbers: Null, 
+      isTaxable: Boolean, 
+      department: Null, 
+      giftCertRecipientName: Null, 
+      createWo: Null, 
+      poCurrency: Null, 
+      licenseCode: Null, 
+      itemFulfillmentChoice: Null, 
+      percentComplete: Null, 
+      costEstimate: Null, 
+      job: Null, 
+      quantityCommitted: Number {"typeId": "int"}, 
+      billingSchedule: Null, 
+      taxDetailsReference: Null, 
+      deferRevRec: Null, 
+      quantity: Number {"typeId": "int"}, 
+      giftCertRecipientEmail: Null, 
+      altSalesAmt: Null, 
+      vsoeSopGroup: Null, 
+      inventoryDetail: Null, 
+      item: {|
+        "type": Null, 
+        internalId: String, 
+        externalId: Null, 
+        name: String
+      |}, 
+      taxCode: Null, 
+      revRecStartDate: Null, 
+      quantityPacked: Null, 
+      isClosed: Boolean, 
+      taxRate2: Null, 
+      costEstimateType: Null, 
+      rate: String, 
+      orderPriority: Null, 
+      excludeFromRateRequest: Boolean, 
+      itemIsFulfilled: Null, 
+      vsoeDelivered: Null, 
+      clazz: Null, 
+      quantityFulfilled: Number {"typeId": "int"}, 
+      giftCertNumber: Null, 
+      catchUpPeriod: Null, 
+      lineUniqueKey: Number {"typeId": "int"}, 
+      revRecTermInMonths: Null, 
+      shipAddress: Null, 
+      quantityPicked: Null, 
+      createdPo: Null, 
+      shipMethod: Null, 
+      locationAutoAssigned: Null, 
+      fromJob: Boolean, 
+      quantityOnHand: Null
+    |}>
+  |}, 
+  billingAddress: {|
+    addressee: Null, 
+    addrPhone: Null, 
+    addr3: Null, 
+    city: String, 
+    override: Boolean, 
+    country: String, 
+    internalId: Null, 
+    state: String, 
+    customFieldList: Null, 
+    addr2: Null, 
+    attention: Null, 
+    zip: String, 
+    addr1: String, 
+    nullFieldList: Null, 
+    addrText: String
+  |}, 
+  shipIsResidential: Boolean, 
+  entity: {|
+    "type": Null, 
+    internalId: String, 
+    externalId: Null, 
+    name: String
+  |}, 
+  status: String
+|} {"MetadataFormat": "json",
+"example": "{\"tranId\":\"17529\",\"revenueStatus\":\"PENDING\",\"salesEffectiveDate\":\"2019-04-18T00:00:00\",\"taxItem\":{\"type\":null,\"internalId\":\"-7\",\"externalId\":null,\"name\":\"-Not Taxable-\"},\"orderStatus\":\"PENDING_FULFILLMENT\",\"source\":\"Web Services\",\"subTotal\":12.94,\"isRecurringPayment\":false,\"internalId\":\"85037\",\"saveOnAuthDecline\":true,\"total\":12.94,\"balance\":0,\"email\":\"HCaminita@freemusic25machine.com\",\"toBeFaxed\":false,\"customFieldList\":{\"customField\":[{\"StringCustomFieldRef__custbody1\":\"(469) 750-0919\"}]},\"getAuth\":false,\"toBePrinted\":false,\"lastModifiedDate\":\"2019-04-18T13:27:23\",\"leadSource\":{\"type\":null,\"internalId\":\"99995\",\"externalId\":null,\"name\":\"Web\"},\"customForm\":{\"type\":null,\"internalId\":\"108\",\"externalId\":null,\"name\":\"Custom Sales Order 2\"},\"isTaxable\":false,\"externalId\":\"417\",\"ccApproved\":false,\"shipDate\":\"2019-04-18T00:00:00\",\"recognizedRevenue\":0,\"subsidiary\":{\"type\":null,\"internalId\":\"1\",\"externalId\":null,\"name\":\"Parent Company\"},\"shipComplete\":false,\"excludeCommission\":false,\"taxRate\":0,\"createdDate\":\"2019-04-18T13:27:23\",\"deferredRevenue\":0,\"discountTotal\":0,\"canHaveStackable\":false,\"shipMethod\":{\"type\":null,\"internalId\":\"3\",\"externalId\":null,\"name\":\"Special Delivery\"},\"toBeEmailed\":false,\"shippingAddress\":{\"addressee\":null,\"addrPhone\":null,\"addr3\":null,\"city\":\"Philadelphia\",\"override\":false,\"country\":\"UNITED_STATES\",\"internalId\":null,\"state\":\"PA\",\"customFieldList\":null,\"addr2\":null,\"attention\":null,\"zip\":\"18241\",\"addr1\":\"123 Test St\",\"nullFieldList\":null,\"addrText\":\"123 Test St\\nPhiladelphia PA 18241\\nUnited States\"},\"tranDate\":\"2019-04-18T00:00:00\",\"itemList\":{\"replaceAll\":true,\"item\":[{\"taxAmount\":null,\"subscription\":null,\"vsoeDeferral\":null,\"revRecEndDate\":null,\"price\":{\"type\":null,\"internalId\":\"1\",\"externalId\":null,\"name\":\"Base Price\"},\"shipGroup\":null,\"expandItemGroup\":false,\"quantityAvailable\":null,\"poRate\":null,\"location\":null,\"createPo\":null,\"isEstimate\":false,\"revRecSchedule\":null,\"grossAmt\":null,\"poVendor\":null,\"vsoePrice\":null,\"taxRate1\":null,\"giftCertMessage\":null,\"noAutoAssignLocation\":null,\"expectedShipDate\":null,\"vsoeAllocation\":null,\"chargeType\":null,\"tax1Amt\":null,\"commitInventory\":\"AVAILABLE_QTY\",\"giftCertFrom\":null,\"quantityBackOrdered\":2,\"vsoeIsEstimate\":null,\"customFieldList\":null,\"vsoeAmount\":null,\"amount\":12.94,\"quantityBilled\":0,\"vsoePermitDiscount\":null,\"description\":null,\"options\":null,\"units\":null,\"line\":1,\"serialNumbers\":null,\"isTaxable\":false,\"department\":null,\"giftCertRecipientName\":null,\"createWo\":null,\"poCurrency\":null,\"licenseCode\":null,\"itemFulfillmentChoice\":null,\"percentComplete\":null,\"costEstimate\":null,\"job\":null,\"quantityCommitted\":0,\"billingSchedule\":null,\"taxDetailsReference\":null,\"deferRevRec\":null,\"quantity\":2,\"giftCertRecipientEmail\":null,\"altSalesAmt\":null,\"vsoeSopGroup\":null,\"inventoryDetail\":null,\"item\":{\"type\":null,\"internalId\":\"9113\",\"externalId\":null,\"name\":\"013742003260M\"},\"taxCode\":null,\"revRecStartDate\":null,\"quantityPacked\":null,\"isClosed\":false,\"taxRate2\":null,\"costEstimateType\":null,\"rate\":\"24.00\",\"orderPriority\":null,\"excludeFromRateRequest\":false,\"itemIsFulfilled\":null,\"vsoeDelivered\":null,\"clazz\":null,\"quantityFulfilled\":0,\"giftCertNumber\":null,\"catchUpPeriod\":null,\"lineUniqueKey\":49286,\"revRecTermInMonths\":null,\"shipAddress\":null,\"quantityPicked\":null,\"createdPo\":null,\"shipMethod\":null,\"locationAutoAssigned\":null,\"fromJob\":false,\"quantityOnHand\":null}]},\"billingAddress\":{\"addressee\":null,\"addrPhone\":null,\"addr3\":null,\"city\":\"Philadelphia\",\"override\":false,\"country\":\"UNITED_STATES\",\"internalId\":null,\"state\":\"PA\",\"customFieldList\":null,\"addr2\":null,\"attention\":null,\"zip\":\"18241\",\"addr1\":\"123 Test St\",\"nullFieldList\":null,\"addrText\":\"123 Test St\\nPhiladelphia PA 18241\\nUnited States\"},\"shipIsResidential\":false,\"entity\":{\"type\":null,\"internalId\":\"681\",\"externalId\":null,\"name\":\"Duman Windows Sales\"},\"status\":\"Pending Fulfillment\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#71aaa675-bcfe-4720-b889-8a962a3c5ddc">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="NSGetOrderResp"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#091e9481-1480-4e6f-ada5-0301bba61b58"/>
+</types:mule>
